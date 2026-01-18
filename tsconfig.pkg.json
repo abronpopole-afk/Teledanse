@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["server/**/*", "shared/**/*"],
+  "compilerOptions": {
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "target": "ES2019",
+    "outDir": "dist-cjs",
+    "noEmit": false,
+    "allowImportingTsExtensions": false,
+    "skipLibCheck": true
+  }
+}
