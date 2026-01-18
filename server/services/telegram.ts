@@ -1,4 +1,4 @@
-import { TelegramClient } from "telegram";
+import { TelegramClient, Api } from "telegram";
 import { StringSession } from "telegram/sessions";
 import { NewMessage } from "telegram/events";
 import { storage } from "../storage";
@@ -141,7 +141,6 @@ export class TelegramService {
     }
 
     try {
-        const Api = (client as any).Api;
         await client.invoke(
             new Api.auth.SignIn({
                 phoneNumber,
