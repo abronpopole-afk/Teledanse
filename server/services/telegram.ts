@@ -130,13 +130,14 @@ export class TelegramService {
     }
 
     try {
-        // Use the native client.signIn method instead of raw invoke for better reliability
-        await client.signIn({
-            phoneNumber,
-            phoneCodeHash,
-            phoneCode: code,
-            onError: (err) => { throw err; }
-        });
+        // Sign in using the MTProto method
+        await client.invoke(
+            new Api.auth.SignIn({
+                phoneNumber,
+                phoneCodeHash,
+                phoneCode: code,
+            })
+        );
         
         const sessionString = (client.session as StringSession).save();
         await storage.updateBotConfigSession(this.userId, sessionString);
