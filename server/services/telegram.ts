@@ -97,6 +97,8 @@ export class TelegramService {
             apiHash,
         }, phoneNumber);
         
+        console.log("sendCode result:", result);
+        
         // Save temporary client or params? 
         // We need to keep the client instance connected to verify code
         clients.set(this.userId, client);
@@ -139,8 +141,9 @@ export class TelegramService {
     }
 
     try {
+        const Api = (client as any).Api;
         await client.invoke(
-            new (client as any).api.auth.SignIn({
+            new Api.auth.SignIn({
                 phoneNumber,
                 phoneCodeHash,
                 phoneCode: code,
