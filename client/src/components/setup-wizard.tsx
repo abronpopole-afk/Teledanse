@@ -37,7 +37,7 @@ export function SetupWizard() {
   // Forms
   const form1 = useForm<z.infer<typeof step1Schema>>({
     resolver: zodResolver(step1Schema),
-    defaultValues: { apiId: undefined, apiHash: "", phoneNumber: "" }
+    defaultValues: { apiId: 0, apiHash: "", phoneNumber: "" }
   });
 
   const form2 = useForm<z.infer<typeof step2Schema>>({

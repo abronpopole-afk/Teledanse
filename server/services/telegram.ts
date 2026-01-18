@@ -90,7 +90,7 @@ export class TelegramService {
             apiId,
             apiHash,
             phoneNumber,
-        });
+        }, false); // Force SMS if needed or just handle regular flow
         
         // Save temporary client or params? 
         // We need to keep the client instance connected to verify code
