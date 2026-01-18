@@ -35,4 +35,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: telegram-bot-windows
-        path: telegram-bot.exe
+        path: |
+          telegram-bot.exe
+          setup-windows.bat
+          .env.example
