@@ -1,0 +1,119 @@
+Parfait, on part sur un userbot Telethon propre, minimal, stable, et surtout 100% adapté à ton cas réel : deux PDF par jour, toujours envoyés par le même bot, dans une conversation privée.
+Je te prépare un script clair, robuste, commenté, que tu pourras lancer sur n’importe quel serveur ou machine locale.
+
+🧱 Architecture du script
+Ton userbot va :
+- se connecter en tant que toi (session Telegram)
+- écouter uniquement la conversation privée avec le bot qui t’envoie les PDF
+- détecter les messages contenant un document PDF
+- transférer automatiquement le PDF dans ton canal
+- logguer chaque transfert (heure, nom du fichier, etc.)
+- ignorer tout le reste
+Les horaires (7h20–7h40 et 19h20–19h40) ne nécessitent aucune logique spéciale :
+le script tourne en continu et réagit dès que le PDF arrive.
+
+🧩 Étape 1 — Installer Telethon
+pip install telethon
+
+
+
+🧩 Étape 2 — Récupérer ton API ID et API HASH
+Va sur :
+https://my.telegram.org/auth
+Puis :
+- API Development Tools
+- Create new app
+- Tu récupères :
+- api_id
+- api_hash
+
+🧩 Étape 3 — Script Telethon complet
+⚠️ Tu n’as qu’à remplacer :
+- API_ID
+- API_HASH
+- TARGET_CHANNEL (ex : "@mon_canal")
+- BOT_USERNAME (ex : "@bot_qui_m_envoie_les_pdfs")
+
+from telethon import TelegramClient, events
+import asyncio
+import os
+
+API_ID = 123456          # <-- remplace
+API_HASH = "abcdef123"   # <-- remplace
+SESSION_NAME = "userbot_session"
+
+BOT_USERNAME = "@nom_du_bot"      # <-- remplace
+TARGET_CHANNEL = "@ton_canal"     # <-- remplace
+
+client = TelegramClient(SESSION_NAME, API_ID, API_HASH)
+
+@client.on(events.NewMessage(from_users=BOT_USERNAME))
+async def handler(event):
+    # Vérifie si le message contient un document
+    if not event.message.document:
+        return
+
+    # Vérifie si c'est un PDF
+    mime = event.message.document.mime_type
+    if mime != "application/pdf":
+        return
+
+    # Récupère le nom du fichier
+    file_name = event.message.document.attributes[0].file_name
+
+    print(f"[+] PDF détecté : {file_name}")
+
+    # Télécharge le PDF localement
+    file_path = await event.message.download_media()
+    print(f"[+] Téléchargé : {file_path}")
+
+    # Transfert dans ton canal
+    await client.send_file(
+        TARGET_CHANNEL,
+        file_path,
+        caption=f"PDF transféré automatiquement : {file_name}"
+    )
+
+    print(f"[+] Transféré dans {TARGET_CHANNEL}")
+
+    # Supprime le fichier local après envoi
+    os.remove(file_path)
+
+async def main():
+    print("Connexion…")
+    await client.start()
+    print("Userbot actif. En attente de PDF…")
+    await client.run_until_disconnected()
+
+asyncio.run(main())
+
+
+
+🧪 Étape 4 — Premier lancement
+Au premier run, Telethon va t’afficher :
+Enter your phone number:
+
+
+Puis il t’enverra un code Telegram → tu le tapes → session créée.
+Ensuite, plus besoin de te reconnecter.
+
+🧩 Étape 5 — Ce que le script fait exactement
+- Il écoute uniquement les messages venant de @nom_du_bot
+- Dès qu’un PDF arrive → il le télécharge → le renvoie dans ton canal
+- Il supprime le fichier local après transfert
+- Il tourne en continu
+- Il ne dépend pas des horaires : il réagit dès que ça arrive
+
+🧠 Optionnel : logs plus détaillés
+Si tu veux, je peux ajouter :
+- un fichier log journalier
+- un système de retry si Telegram rate un upload
+- une vérification anti‑doublon
+- un watchdog pour redémarrer le script si crash
+
+🎯 Tu veux que je t’ajoute quoi ?
+- Une version TypeScript avec GramJS
+- Une version Docker prête à déployer
+- Une version avec logs persistants
+- Une version avec alertes en cas d’échec
+Dis‑moi ce que tu préfères et je te l’adapte sur mesure.
