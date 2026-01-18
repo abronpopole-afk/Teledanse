@@ -43,26 +43,26 @@ export async function registerRoutes(
         
         const phoneCodeHash = await service.sendCode(input.apiId, input.apiHash, input.phoneNumber);
         
-        // We need to store phoneCodeHash temporarily? 
-        // Actually, GramJS sendCode returns it. We need to pass it back to frontend 
-        // OR store it in DB. Let's send it back in a cookie or just response? 
-        // The API response schema is just { message }.
-        // Let's store it in the session or DB? 
-        // For simplicity, let's assume the frontend keeps it? No, security.
-        // Let's store it in `botConfigs` temporarily? Or just return it if we change schema.
-        // Re-reading my schema: `VerifyCodeRequest` has `phoneCodeHash`.
-        // So I should return it.
-        // I need to update `api.bot.login.responses` to include `phoneCodeHash`?
-        // Or store it in DB. DB doesn't have a field for it.
-        // I'll update the schema to return it, OR just rely on client to hold it (it's public hash anyway).
-        // Wait, I defined `responses: { 200: z.object({ message: z.string() }) }`.
-        // I should stick to that and maybe store hash in session? 
-        // Actually, `req.session` is available.
+        console.log("Saving to session:", { phoneCodeHash, phoneNumber: input.phoneNumber });
         (req.session as any).phoneCodeHash = phoneCodeHash;
         (req.session as any).phoneNumber = input.phoneNumber;
+        
+        // Force session save to ensure data is available in the next request
+        await new Promise((resolve, reject) => {
+          req.session.save((err: any) => {
+            if (err) {
+              console.error("Session save error:", err);
+              reject(err);
+            } else {
+              console.log("Session saved successfully");
+              resolve(true);
+            }
+          });
+        });
 
         res.json({ message: "Code sent" });
     } catch (e: any) {
+        console.error("Login route error:", e);
         res.status(400).json({ message: e.message || "Failed to send code" });
     }
   });
@@ -73,22 +73,26 @@ export async function registerRoutes(
           const input = api.bot.verifyCode.input.parse(req.body);
           const service = getTelegramService(userId);
           
+          console.log("Verifying code. Session content:", { 
+              phoneCodeHash: (req.session as any).phoneCodeHash, 
+              phoneNumber: (req.session as any).phoneNumber 
+          });
+
           const phoneCodeHash = (req.session as any).phoneCodeHash;
           const phoneNumber = (req.session as any).phoneNumber;
 
           if (!phoneCodeHash || !phoneNumber) {
-              return res.status(400).json({ message: "Session expired, please login again" });
+              return res.status(400).json({ message: "Session expirée ou données manquantes. Veuillez recommencer la connexion." });
           }
 
           await service.signIn(phoneNumber, phoneCodeHash, input.code);
           res.json({ message: "Authenticated successfully", success: true });
       } catch (e: any) {
+          console.error("Verification error:", e);
           if (e.message === "PASSWORD_NEEDED") {
                return res.status(200).json({ message: "2FA Password Required", success: false }); 
-               // success: false implies next step needed? Or I should use a different status/code.
-               // Schema says: { message, success }.
           }
-          res.status(400).json({ message: e.message || "Verification failed" });
+          res.status(400).json({ message: e.message || "La vérification a échoué" });
       }
   });
 

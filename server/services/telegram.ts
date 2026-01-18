@@ -74,10 +74,6 @@ export class TelegramService {
   // --- Auth Flow ---
 
   async sendCode(apiId: number, apiHash: string, phoneNumber: string): Promise<string> {
-    // Save config first (incomplete, without session)
-    // We need apiId/Hash stored to recreate client next step
-    // But we don't have a session string yet.
-    
     const session = new StringSession("");
     const client = new TelegramClient(session, apiId, apiHash, {
       connectionRetries: 5,
@@ -92,6 +88,7 @@ export class TelegramService {
             apiHash
         });
 
+        // Use the simplified signature for sendCode
         const result = await client.sendCode({
             apiId,
             apiHash,
@@ -99,18 +96,14 @@ export class TelegramService {
         
         console.log("sendCode result:", result);
         
-        // Save temporary client or params? 
-        // We need to keep the client instance connected to verify code
         clients.set(this.userId, client);
         
-        // Save partial config to DB so we can resume/update later
-        // We'll update the session string after full login
         await storage.upsertBotConfig({
             userId: this.userId,
             apiId,
             apiHash,
             phoneNumber,
-            sourceBotUsername: "", // placeholders
+            sourceBotUsername: "", 
             targetChannelId: "",
             isActive: false,
         });
@@ -125,10 +118,6 @@ export class TelegramService {
   async signIn(phoneNumber: string, phoneCodeHash: string, code: string): Promise<void> {
     let client = clients.get(this.userId);
     if (!client) {
-        // Recover from DB if server restarted? 
-        // For the login flow to work, we usually need the same client instance or at least same session context.
-        // If client is missing, we might fail. 
-        // Re-creating client might work if we had the hash, but sendCode initiated a session.
         const config = await storage.getBotConfig(this.userId);
         if (config) {
              const session = new StringSession("");
@@ -141,18 +130,16 @@ export class TelegramService {
     }
 
     try {
-        await client.invoke(
-            new Api.auth.SignIn({
-                phoneNumber,
-                phoneCodeHash,
-                phoneCode: code,
-            })
-        );
+        // Use the native client.signIn method instead of raw invoke for better reliability
+        await client.signIn({
+            phoneNumber,
+            phoneCodeHash,
+            phoneCode: code,
+            onError: (err) => { throw err; }
+        });
         
-        // Save session
         const sessionString = (client.session as StringSession).save();
         await storage.updateBotConfigSession(this.userId, sessionString);
-        
     } catch (e: any) {
         if (e.errorMessage === "SESSION_PASSWORD_NEEDED") {
             throw new Error("PASSWORD_NEEDED");
