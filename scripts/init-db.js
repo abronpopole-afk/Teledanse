@@ -9,8 +9,10 @@ function loadEnv() {
   const envPath = path.resolve(process.cwd(), '.env');
   if (fs.existsSync(envPath)) {
     const envConfig = fs.readFileSync(envPath, 'utf8');
-    envConfig.split('\n').forEach(line => {
-      const [key, ...valueParts] = line.split('=');
+    envConfig.split(/\r?\n/).forEach(line => {
+      const trimmedLine = line.trim();
+      if (!trimmedLine || trimmedLine.startsWith('#')) return;
+      const [key, ...valueParts] = trimmedLine.split('=');
       if (key && valueParts.length > 0) {
         process.env[key.trim()] = valueParts.join('=').trim();
       }
