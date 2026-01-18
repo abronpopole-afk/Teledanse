@@ -29,21 +29,49 @@ function loadEnv() {
 loadEnv();
 
 async function main() {
-  const connectionString = process.env.DATABASE_URL;
+  const fullConnectionString = process.env.DATABASE_URL;
   
-  if (!connectionString) {
+  if (!fullConnectionString) {
     console.error("❌ DATABASE_URL manquante dans le .env");
     process.exit(1);
   }
 
-  console.log("⏳ Connexion directe à PostgreSQL...");
-  const client = new pg.Client({ connectionString });
+  // Extraire les infos de connexion pour se connecter à la DB par défaut 'postgres'
+  // Format: postgres://user:pass@host:port/dbname
+  const urlParts = fullConnectionString.match(/postgres:\/\/([^:]+):([^@]+)@([^/]+)\/(.+)/);
+  if (!urlParts) {
+    console.error("❌ Format DATABASE_URL invalide");
+    process.exit(1);
+  }
+
+  const [_, user, password, host, dbName] = urlParts;
+  const defaultConnectionString = `postgres://${user}:${password}@${host}/postgres`;
+
+  console.log(`⏳ Connexion à PostgreSQL (base par défaut) pour créer '${dbName}'...`);
+  const defaultClient = new pg.Client({ connectionString: defaultConnectionString });
 
   try {
-    await client.connect();
-    console.log("✅ Connecté ! Création des tables...");
+    await defaultClient.connect();
+    
+    // 1. Création de la base de données si elle n'existe pas
+    // Note: CREATE DATABASE ne peut pas être exécuté dans une transaction
+    try {
+      await defaultClient.query(`CREATE DATABASE ${dbName}`);
+      console.log(`✅ Base de données '${dbName}' créée.`);
+    } catch (err) {
+      if (err.code === '42P04') {
+        console.log(`ℹ️ La base de données '${dbName}' existe déjà.`);
+      } else {
+        throw err;
+      }
+    }
+    await defaultClient.end();
 
-    // SQL Pur
+    // 2. Connexion à la nouvelle base pour créer les tables
+    console.log(`⏳ Connexion à '${dbName}' pour créer les tables...`);
+    const client = new pg.Client({ connectionString: fullConnectionString });
+    await client.connect();
+
     const sql = `
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
@@ -80,12 +108,14 @@ async function main() {
     `;
 
     await client.query(sql);
-    console.log("✅ Base de données initialisée avec succès !");
-  } catch (err) {
-    console.error("❌ Erreur SQL :", err.message);
-    process.exit(1);
-  } finally {
+    console.log("✅ Tables créées et utilisateur par défaut configuré !");
     await client.end();
+  } catch (err) {
+    console.error("❌ Erreur SQL :");
+    console.error(`   Code: ${err.code}`);
+    console.error(`   Message: ${err.message}`);
+    console.log("\n💡 ASTUCE : Assurez-vous que l'utilisateur PostgreSQL a les droits 'CREATEDB'.");
+    process.exit(1);
   }
 }
 
