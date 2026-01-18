@@ -10,20 +10,6 @@ import AuthPage from "@/pages/auth";
 import Dashboard from "@/pages/dashboard";
 
 function Router() {
-  const { isAuthenticated, isLoading } = useAuth();
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="h-8 w-8 animate-spin text-emerald-500" />
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return <AuthPage />;
-  }
-
   return (
     <Switch>
       <Route path="/" component={Dashboard} />

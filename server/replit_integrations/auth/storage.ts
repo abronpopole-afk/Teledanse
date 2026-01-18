@@ -29,6 +29,21 @@ class AuthStorage implements IAuthStorage {
       .returning();
     return user;
   }
+
+  async ensureDefaultUser(): Promise<void> {
+    const defaultId = "default-user-id";
+    const existing = await this.getUser(defaultId);
+    if (!existing) {
+      await this.upsertUser({
+        id: defaultId,
+        email: "default@example.com",
+        firstName: "Default",
+        lastName: "User",
+        profileImageUrl: "",
+      });
+    }
+  }
 }
 
 export const authStorage = new AuthStorage();
+authStorage.ensureDefaultUser().catch(console.error);
