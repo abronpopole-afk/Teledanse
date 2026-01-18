@@ -12,9 +12,15 @@ function loadEnv() {
     envConfig.split(/\r?\n/).forEach(line => {
       const trimmedLine = line.trim();
       if (!trimmedLine || trimmedLine.startsWith('#')) return;
-      const [key, ...valueParts] = trimmedLine.split('=');
-      if (key && valueParts.length > 0) {
-        process.env[key.trim()] = valueParts.join('=').trim();
+      
+      const index = trimmedLine.indexOf('=');
+      if (index > 0) {
+        const key = trimmedLine.substring(0, index).trim();
+        const value = trimmedLine.substring(index + 1).trim();
+        // Suppression des éventuels guillemets entourant la valeur
+        const cleanValue = value.replace(/^["'](.*)["']$/, '$1');
+        process.env[key] = cleanValue;
+        console.log(`[ENV] Chargé : ${key}`);
       }
     });
   }
