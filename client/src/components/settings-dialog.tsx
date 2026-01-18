@@ -52,14 +52,14 @@ export function SettingsDialog({ config }: SettingsDialogProps) {
       <DialogTrigger asChild>
         <Button variant="outline" size="sm" className="gap-2 border-white/10 hover:bg-white/5">
           <Settings2 className="w-4 h-4" />
-          Configure
+          Configurer
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md bg-card/95 backdrop-blur-xl border-white/10 text-white">
         <DialogHeader>
-          <DialogTitle>Bot Configuration</DialogTitle>
+          <DialogTitle>Configuration du Bot</DialogTitle>
           <DialogDescription>
-            Set the source bot to listen to and the target channel to forward files to.
+            Définissez le bot source à écouter et le canal cible pour transférer les fichiers.
           </DialogDescription>
         </DialogHeader>
 
@@ -70,11 +70,11 @@ export function SettingsDialog({ config }: SettingsDialogProps) {
               name="sourceBotUsername"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Source Bot Username</FormLabel>
+                  <FormLabel>Nom d'utilisateur du Bot Source</FormLabel>
                   <FormControl>
                     <Input placeholder="@pdfbot" {...field} className="bg-background/50 border-white/10" />
                   </FormControl>
-                  <p className="text-xs text-muted-foreground">The bot you want to download files from.</p>
+                  <p className="text-xs text-muted-foreground">Le bot dont vous souhaitez télécharger les fichiers.</p>
                   <FormMessage />
                 </FormItem>
               )}
@@ -85,25 +85,25 @@ export function SettingsDialog({ config }: SettingsDialogProps) {
               name="targetChannelId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Target Channel</FormLabel>
+                  <FormLabel>Canal de Destination</FormLabel>
                   <FormControl>
-                    <Input placeholder="@my_archive_channel" {...field} className="bg-background/50 border-white/10" />
+                    <Input placeholder="@mon_canal_archive" {...field} className="bg-background/50 border-white/10" />
                   </FormControl>
-                  <p className="text-xs text-muted-foreground">The channel/chat where files will be forwarded.</p>
+                  <p className="text-xs text-muted-foreground">Le canal ou chat où les fichiers seront transférés.</p>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
             <div className="flex justify-end gap-3">
-              <Button type="button" variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
+              <Button type="button" variant="ghost" onClick={() => setOpen(false)}>Annuler</Button>
               <Button 
                 type="submit" 
                 className="bg-emerald-600 hover:bg-emerald-500 text-white gap-2"
                 disabled={updateSettings.isPending}
               >
                 {updateSettings.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                Save Changes
+                Enregistrer
               </Button>
             </div>
           </form>

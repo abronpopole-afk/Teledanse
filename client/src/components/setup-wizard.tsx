@@ -54,11 +54,11 @@ export function SetupWizard() {
   const onStep1Submit = (data: z.infer<typeof step1Schema>) => {
     loginMutation.mutate(data, {
       onSuccess: () => {
-        toast({ title: "Code Sent", description: "Check your Telegram app for the code." });
+        toast({ title: "Code Envoyé", description: "Vérifiez votre application Telegram pour le code." });
         setStep(2);
       },
       onError: (err) => {
-        toast({ title: "Connection Failed", description: err.message, variant: "destructive" });
+        toast({ title: "Échec de la connexion", description: err.message, variant: "destructive" });
       }
     });
   };
@@ -67,7 +67,7 @@ export function SetupWizard() {
     verifyCodeMutation.mutate(data, {
       onSuccess: (res) => {
         if (res.success) {
-          toast({ title: "Authenticated!", description: "Bot connected successfully." });
+          toast({ title: "Authentifié !", description: "Bot connecté avec succès." });
         } else {
           // If success is false but no error, likely needs password
           setStep(3);
@@ -77,7 +77,7 @@ export function SetupWizard() {
         if (err.message.includes("password")) {
           setStep(3);
         } else {
-          toast({ title: "Verification Failed", description: err.message, variant: "destructive" });
+          toast({ title: "Échec de la vérification", description: err.message, variant: "destructive" });
         }
       }
     });
@@ -86,10 +86,10 @@ export function SetupWizard() {
   const onStep3Submit = (data: z.infer<typeof step3Schema>) => {
     verifyPasswordMutation.mutate(data, {
       onSuccess: () => {
-        toast({ title: "Authenticated!", description: "2FA Verified successfully." });
+        toast({ title: "Authentifié !", description: "Vérification 2FA réussie." });
       },
       onError: (err) => {
-        toast({ title: "2FA Failed", description: err.message, variant: "destructive" });
+        toast({ title: "Échec 2FA", description: err.message, variant: "destructive" });
       }
     });
   };
@@ -97,8 +97,8 @@ export function SetupWizard() {
   return (
     <div className="w-full max-w-md mx-auto">
       <div className="mb-8 text-center space-y-2">
-        <h2 className="text-3xl font-display font-bold text-white">Connect Telegram</h2>
-        <p className="text-muted-foreground">Follow the steps to authenticate your userbot.</p>
+        <h2 className="text-3xl font-display font-bold text-white">Connexion à Telegram</h2>
+        <p className="text-muted-foreground">Suivez les étapes pour authentifier votre userbot.</p>
       </div>
 
       <Card className="glass-panel p-6 overflow-hidden relative">
@@ -116,8 +116,8 @@ export function SetupWizard() {
                   <Smartphone className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-white">API Credentials</h3>
-                  <p className="text-xs text-muted-foreground">From my.telegram.org</p>
+                  <h3 className="font-semibold text-white">Identifiants API</h3>
+                  <p className="text-xs text-muted-foreground">Depuis my.telegram.org</p>
                 </div>
               </div>
 
@@ -154,7 +154,7 @@ export function SetupWizard() {
                     name="phoneNumber"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Phone Number</FormLabel>
+                        <FormLabel>Numéro de téléphone</FormLabel>
                         <FormControl>
                           <Input placeholder="+1234567890" {...field} className="bg-background/50" />
                         </FormControl>
@@ -167,7 +167,7 @@ export function SetupWizard() {
                     className="w-full bg-emerald-600 hover:bg-emerald-500 text-white"
                     disabled={loginMutation.isPending}
                   >
-                    {loginMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : "Send Code"}
+                    {loginMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : "Envoyer le Code"}
                   </Button>
                 </form>
               </Form>
@@ -187,8 +187,8 @@ export function SetupWizard() {
                   <Shield className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-white">Verification Code</h3>
-                  <p className="text-xs text-muted-foreground">Check your Telegram messages</p>
+                  <h3 className="font-semibold text-white">Code de Vérification</h3>
+                  <p className="text-xs text-muted-foreground">Vérifiez vos messages Telegram</p>
                 </div>
               </div>
 
@@ -216,7 +216,7 @@ export function SetupWizard() {
                     className="w-full bg-blue-600 hover:bg-blue-500 text-white"
                     disabled={verifyCodeMutation.isPending}
                   >
-                    {verifyCodeMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : "Verify Code"}
+                    {verifyCodeMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : "Vérifier le Code"}
                   </Button>
                 </form>
               </Form>
@@ -236,8 +236,8 @@ export function SetupWizard() {
                   <Key className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-white">Two-Step Verification</h3>
-                  <p className="text-xs text-muted-foreground">Enter your cloud password</p>
+                  <h3 className="font-semibold text-white">Validation en deux étapes</h3>
+                  <p className="text-xs text-muted-foreground">Entrez votre mot de passe cloud</p>
                 </div>
               </div>
 
@@ -248,7 +248,7 @@ export function SetupWizard() {
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Password</FormLabel>
+                        <FormLabel>Mot de passe</FormLabel>
                         <FormControl>
                           <Input 
                             type="password"
@@ -266,7 +266,7 @@ export function SetupWizard() {
                     className="w-full bg-purple-600 hover:bg-purple-500 text-white"
                     disabled={verifyPasswordMutation.isPending}
                   >
-                    {verifyPasswordMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : "Verify Password"}
+                    {verifyPasswordMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : "Vérifier le Mot de passe"}
                   </Button>
                 </form>
               </Form>

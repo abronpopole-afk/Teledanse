@@ -22,7 +22,7 @@ export default function Dashboard() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="flex flex-col items-center gap-4 text-muted-foreground">
           <Loader2 className="w-8 h-8 animate-spin text-emerald-500" />
-          <p>Loading userbot status...</p>
+          <p>Chargement du statut du bot...</p>
         </div>
       </div>
     );
@@ -38,7 +38,7 @@ export default function Dashboard() {
         
         <div className="absolute top-4 right-4 z-10">
           <Button variant="ghost" onClick={() => logout()} className="text-muted-foreground hover:text-white">
-            <LogOut className="w-4 h-4 mr-2" /> Sign Out
+            <LogOut className="w-4 h-4 mr-2" /> Déconnexion
           </Button>
         </div>
 
@@ -57,7 +57,7 @@ export default function Dashboard() {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-cyan-500 flex items-center justify-center text-white font-bold">
               TB
             </div>
-            <h1 className="text-lg font-display font-semibold tracking-tight">TeleBot Manager</h1>
+            <h1 className="text-lg font-display font-semibold tracking-tight">Gestionnaire TeleBot</h1>
           </div>
           
           <div className="flex items-center gap-4">
@@ -108,7 +108,7 @@ export default function Dashboard() {
                     className="w-full sm:w-auto shadow-lg shadow-red-500/20"
                   >
                     {stopBot.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Power className="w-4 h-4 mr-2" />}
-                    Stop Bot
+                    Arrêter le Bot
                   </Button>
                 ) : (
                   <Button 
@@ -117,7 +117,7 @@ export default function Dashboard() {
                     disabled={startBot.isPending}
                   >
                      {startBot.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Power className="w-4 h-4 mr-2" />}
-                    Start Bot
+                    Démarrer le Bot
                   </Button>
                 )}
               </div>
@@ -136,7 +136,7 @@ export default function Dashboard() {
                  <div className="p-3 rounded-lg bg-black/20 border border-white/5 space-y-1">
                    <p className="text-xs text-muted-foreground uppercase tracking-wider">Source</p>
                    <p className="text-sm font-mono text-emerald-400 truncate">
-                     {botStatus?.config?.sourceBotUsername || <span className="text-muted-foreground italic">Not set</span>}
+                     {botStatus?.config?.sourceBotUsername || <span className="text-muted-foreground italic">Non défini</span>}
                    </p>
                  </div>
                  
@@ -145,9 +145,9 @@ export default function Dashboard() {
                  </div>
 
                  <div className="p-3 rounded-lg bg-black/20 border border-white/5 space-y-1">
-                   <p className="text-xs text-muted-foreground uppercase tracking-wider">Target</p>
+                   <p className="text-xs text-muted-foreground uppercase tracking-wider">Destination</p>
                    <p className="text-sm font-mono text-blue-400 truncate">
-                     {botStatus?.config?.targetChannelId || <span className="text-muted-foreground italic">Not set</span>}
+                     {botStatus?.config?.targetChannelId || <span className="text-muted-foreground italic">Non défini</span>}
                    </p>
                  </div>
                </div>
@@ -158,9 +158,9 @@ export default function Dashboard() {
         {/* Logs Section */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-white">Transfer Activity</h2>
+            <h2 className="text-lg font-semibold text-white">Activité de Transfert</h2>
             <div className="text-xs text-muted-foreground">
-              Auto-refreshing every 10s
+              Actualisation auto toutes les 10s
             </div>
           </div>
 
@@ -169,9 +169,9 @@ export default function Dashboard() {
               <table className="w-full text-left text-sm">
                 <thead>
                   <tr className="border-b border-white/5 bg-white/5">
-                    <th className="px-6 py-4 font-semibold text-muted-foreground w-1/2">File Name</th>
-                    <th className="px-6 py-4 font-semibold text-muted-foreground">Status</th>
-                    <th className="px-6 py-4 font-semibold text-muted-foreground">Time</th>
+                    <th className="px-6 py-4 font-semibold text-muted-foreground w-1/2">Nom du Fichier</th>
+                    <th className="px-6 py-4 font-semibold text-muted-foreground">Statut</th>
+                    <th className="px-6 py-4 font-semibold text-muted-foreground">Heure</th>
                     <th className="px-6 py-4 font-semibold text-muted-foreground text-right">Message</th>
                   </tr>
                 </thead>
@@ -180,14 +180,14 @@ export default function Dashboard() {
                     <tr>
                       <td colSpan={4} className="px-6 py-8 text-center text-muted-foreground">
                         <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2" />
-                        Loading logs...
+                        Chargement des logs...
                       </td>
                     </tr>
                   ) : logs?.length === 0 ? (
                     <tr>
                       <td colSpan={4} className="px-6 py-12 text-center text-muted-foreground">
                         <FileText className="w-12 h-12 mx-auto mb-3 opacity-20" />
-                        <p>No transfers yet.</p>
+                        <p>Aucun transfert pour le moment.</p>
                       </td>
                     </tr>
                   ) : (

@@ -21,24 +21,24 @@ export default function AuthPage() {
           </div>
           
           <h1 className="text-5xl font-display font-bold text-white tracking-tight leading-tight">
-            Automate your <br />
-            <span className="text-gradient-primary">Telegram workflow</span>
+            Automatisez votre <br />
+            <span className="text-gradient-primary">flux Telegram</span>
           </h1>
           
           <p className="text-lg text-muted-foreground leading-relaxed">
-            Securely manage your PDF forwarding bot with a beautiful, real-time dashboard. 
-            Monitor transfers, configure settings, and handle authentication with ease.
+            Gérez en toute sécurité votre bot de transfert de PDF avec un magnifique tableau de bord en temps réel. 
+            Surveillez les transferts, configurez les paramètres et gérez l'authentification en toute simplicité.
           </p>
 
           <div className="flex gap-4 pt-4">
              <div className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-sm text-muted-foreground">
-                Real-time Logs
+                Logs en temps réel
              </div>
              <div className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-sm text-muted-foreground">
-                Secure Auth
+                Auth Sécurisée
              </div>
              <div className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-sm text-muted-foreground">
-                Cloud Based
+                Basé sur le Cloud
              </div>
           </div>
         </div>
@@ -48,8 +48,8 @@ export default function AuthPage() {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 relative">
          <div className="max-w-md w-full space-y-8 text-center">
             <div className="space-y-2">
-               <h2 className="text-3xl font-bold tracking-tight text-white">Welcome back</h2>
-               <p className="text-muted-foreground">Sign in to access your dashboard</p>
+               <h2 className="text-3xl font-bold tracking-tight text-white">Bienvenue</h2>
+               <p className="text-muted-foreground">Connectez-vous pour accéder à votre tableau de bord</p>
             </div>
 
             <Button 
@@ -57,12 +57,12 @@ export default function AuthPage() {
               className="w-full bg-white text-black hover:bg-white/90 h-12 text-base font-medium shadow-lg shadow-white/5"
               onClick={handleLogin}
             >
-               Sign in with Replit
+               Se connecter avec Replit
                <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
 
             <p className="text-xs text-muted-foreground">
-              By continuing, you agree to our Terms of Service and Privacy Policy.
+              En continuant, vous acceptez nos Conditions d'utilisation et notre Politique de confidentialité.
             </p>
          </div>
       </div>
