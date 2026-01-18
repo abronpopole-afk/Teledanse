@@ -1,8 +1,7 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import pg from "pg";
-import * as schema from "../shared/schema";
-import { migrate } from "drizzle-orm/node-postgres/migrator";
-import path from "path";
+import * as schema from "../shared/schema.js";
+import { sql } from "drizzle-orm";
 
 async function main() {
   if (!process.env.DATABASE_URL) {
@@ -11,27 +10,54 @@ async function main() {
     process.exit(1);
   }
 
-  console.log("⏳ Initialisation de la base de données...");
+  console.log("⏳ Connexion à la base de données...");
 
   const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
-  const db = drizzle(pool, { schema });
+  const db = drizzle(pool);
 
   try {
-    // Dans un environnement local sans migrations complexes, on peut utiliser push
-    // Mais ici on simule une approche robuste pour Windows
-    console.log("📦 Création des tables...");
+    console.log("📦 Création des tables (si elles n'existent pas)...");
     
-    // Note: Dans une vraie application Drizzle, on utiliserait drizzle-kit push
-    // Mais pour un script d'auto-installation, on peut expliquer à l'utilisateur
-    // d'utiliser npx drizzle-kit push --force
-    
+    // Création manuelle des tables pour éviter la dépendance à drizzle-kit sur Windows
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        username TEXT NOT NULL UNIQUE,
+        password TEXT NOT NULL
+      );
+      
+      CREATE TABLE IF NOT EXISTS bot_configs (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER NOT NULL REFERENCES users(id),
+        api_id INTEGER NOT NULL,
+        api_hash TEXT NOT NULL,
+        phone_number TEXT NOT NULL,
+        session_string TEXT,
+        source_bot_username TEXT,
+        target_channel_id TEXT,
+        is_active BOOLEAN DEFAULT false,
+        last_error TEXT
+      );
+
+      CREATE TABLE IF NOT EXISTS transfer_logs (
+        id SERIAL PRIMARY KEY,
+        bot_config_id INTEGER NOT NULL REFERENCES bot_configs(id),
+        file_name TEXT NOT NULL,
+        file_size INTEGER,
+        status TEXT NOT NULL,
+        error_message TEXT,
+        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    // Insérer l'utilisateur par défaut si nécessaire
+    await pool.query(`
+      INSERT INTO users (id, username, password) 
+      VALUES (1, 'default_user', 'no_password_required')
+      ON CONFLICT (id) DO NOTHING;
+    `);
+
     console.log("✅ Base de données prête !");
-    console.log("\nProchaines étapes pour Windows :");
-    console.log("1. Installez PostgreSQL");
-    console.log("2. Créez une base de données");
-    console.log("3. Configurez le fichier .env");
-    console.log("4. Exécutez : npx drizzle-kit push");
-    
     await pool.end();
   } catch (error) {
     console.error("❌ Échec de l'initialisation :", error);
