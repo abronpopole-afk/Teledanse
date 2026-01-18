@@ -86,11 +86,16 @@ export class TelegramService {
     await client.connect();
     
     try {
+        console.log("Calling client.sendCode with:", {
+            phoneNumber,
+            apiId,
+            apiHash
+        });
+
         const result = await client.sendCode({
             apiId,
             apiHash,
-            phoneNumber,
-        }); 
+        }, phoneNumber);
         
         // Save temporary client or params? 
         // We need to keep the client instance connected to verify code
