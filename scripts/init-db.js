@@ -1,6 +1,24 @@
 // Script d'initialisation SANS AUCUNE DEPENDANCE (Pur Node.js + pg)
 // On utilise 'require' pour être sûr que ça passe partout sur Windows
 import pg from 'pg';
+import fs from 'fs';
+import path from 'path';
+
+// Chargement manuel du .env pour éviter la dépendance 'dotenv'
+function loadEnv() {
+  const envPath = path.resolve(process.cwd(), '.env');
+  if (fs.existsSync(envPath)) {
+    const envConfig = fs.readFileSync(envPath, 'utf8');
+    envConfig.split('\n').forEach(line => {
+      const [key, ...valueParts] = line.split('=');
+      if (key && valueParts.length > 0) {
+        process.env[key.trim()] = valueParts.join('=').trim();
+      }
+    });
+  }
+}
+
+loadEnv();
 
 async function main() {
   const connectionString = process.env.DATABASE_URL;
