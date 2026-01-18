@@ -39,3 +39,4 @@ jobs:
           telegram-bot.exe
           setup-windows.bat
           .env.example
+          scripts/init-db.js

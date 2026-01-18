@@ -15,8 +15,8 @@ if not exist .env (
 
 :: 2. Initialisation de la base de données
 echo [2/3] Initialisation de la base de donnees...
-:: On utilise le script d'initialisation direct au lieu de drizzle-kit push qui pose problème sur Windows
-call npx tsx scripts/init-db.ts
+:: On utilise node directement sur le fichier JS sans dépendances
+node scripts/init-db.js
 if %errorlevel% neq 0 (
     echo ERREUR : Impossible d'initialiser la base de donnees. 
     echo Verifiez que PostgreSQL est lance et que DATABASE_URL dans .env est correct.
